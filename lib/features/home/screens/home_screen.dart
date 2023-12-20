@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:reddit_two/core/constants/constants.dart';
 
 import '../../auth/controllers/auth_controller.dart';
+import '../delegates/search_community_delegate.dart';
 import '../drawer/community_list_drawer.dart';
 import '../drawer/profile_drawer.dart';
 
@@ -33,7 +34,7 @@ class HomeScreen extends ConsumerWidget {
         actions: [
           IconButton(
               onPressed: () {
-                //showSearch(context: context, delegate: SearchCommunityDelegate(ref));
+                showSearch(context: context, delegate: SearchCommunityDelegate(ref));
               },
               icon: const Icon(Icons.search)),
           Builder(builder: (context) {
