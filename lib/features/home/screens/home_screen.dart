@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:reddit_two/core/constants/constants.dart';
 
 import '../../auth/controllers/auth_controller.dart';
-import '../drawer/community_List_drawer.dart';
+import '../drawer/community_list_drawer.dart';
 import '../drawer/profile_drawer.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -42,10 +43,15 @@ class HomeScreen extends ConsumerWidget {
               },
               child: CircleAvatar(
                 minRadius: 17,
-                backgroundImage: NetworkImage(user?.profilePic ?? ""),
+                backgroundImage: NetworkImage(user?.profilePic ?? Constants.avatarDefault),
               ),
             );
-          })
+          }),
+          IconButton(
+              onPressed: () {
+                ref.read(authControllerProvider.notifier).logOut();
+              },
+              icon: const Icon(Icons.logout_rounded))
         ],
       ),
       drawer: const CommunityListDrawer(),
