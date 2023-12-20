@@ -1,29 +1,61 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:reddit_two/features/auth/controllers/auth_controller.dart';
+
+import '../../auth/controllers/auth_controller.dart';
+import '../drawer/community_List_drawer.dart';
+import '../drawer/profile_drawer.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
+  void displayDrawer(BuildContext context) {
+    Scaffold.of(context).openDrawer();
+  }
+
+  void displayEndDrawer(BuildContext context) {
+    Scaffold.of(context).openEndDrawer();
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.read(userProvider);
+    final user = ref.watch(userProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home'),
+        leading: Builder(builder: (context) {
+          return IconButton(
+              onPressed: () {
+                displayDrawer(context);
+              },
+              icon: const Icon(Icons.menu));
+        }),
         actions: [
           IconButton(
               onPressed: () {
-                ref.read(authControllerProvider.notifier).logOut();
+                //showSearch(context: context, delegate: SearchCommunityDelegate(ref));
               },
-              icon: const Icon(Icons.logout_outlined))
+              icon: const Icon(Icons.search)),
+          Builder(builder: (context) {
+            return GestureDetector(
+              onTap: () {
+                displayEndDrawer(context);
+              },
+              child: CircleAvatar(
+                minRadius: 17,
+                backgroundImage: NetworkImage(user?.profilePic ?? ""),
+              ),
+            );
+          })
         ],
       ),
+      drawer: const CommunityListDrawer(),
+      endDrawer: const ProfileDrawer(),
       body: Center(
-          child: Text(
-        user?.name ?? 'no name',
-        style: const TextStyle(color: Colors.blue),
-      )),
+        child: Text(
+          user?.karma.toString() ?? "0",
+          style: const TextStyle(color: Colors.white),
+        ),
+      ),
     );
   }
 }
