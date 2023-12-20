@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/foundation.dart';
 
 class UserModel {
@@ -60,7 +59,7 @@ class UserModel {
         isAuthenticated: map['isAuthenticated'] as bool,
         karma: map['karma'] as int,
         awards: List<String>.from(
-          (map['awards'] as List<String>),
+          (map['awards']),
         ));
   }
 

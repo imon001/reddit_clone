@@ -7,8 +7,8 @@ import '../constants/constants.dart';
 
 class SingInButton extends ConsumerWidget {
   const SingInButton({super.key});
-  void singInGoogle(WidgetRef ref) {
-    ref.read(authControllerProvider).singInWithGoogle();
+  void singInGoogle(WidgetRef ref, BuildContext context) {
+    ref.read(authControllerProvider.notifier).singInWithGoogle(context);
   }
 
   @override
@@ -20,7 +20,7 @@ class SingInButton extends ConsumerWidget {
       ),
       child: ElevatedButton(
         onPressed: () {
-          singInGoogle(ref);
+          singInGoogle(ref, context);
         },
         style: ElevatedButton.styleFrom(
           minimumSize: const Size(double.infinity, 50),
