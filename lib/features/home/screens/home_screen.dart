@@ -48,11 +48,6 @@ class HomeScreen extends ConsumerWidget {
               ),
             );
           }),
-          IconButton(
-              onPressed: () {
-                ref.read(authControllerProvider.notifier).logOut();
-              },
-              icon: const Icon(Icons.logout_rounded))
         ],
       ),
       drawer: const CommunityListDrawer(),
