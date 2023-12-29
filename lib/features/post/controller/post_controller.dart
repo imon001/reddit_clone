@@ -114,7 +114,7 @@ class PostController extends StateNotifier<bool> {
         communityProfilePic: selectedCommunity.avatar,
         userName: user!.name,
         userUid: user.uid,
-        type: 'link',
+        type: 'image',
         commentCount: 0,
         createdAt: DateTime.now(),
         upVote: [],
@@ -131,6 +131,15 @@ class PostController extends StateNotifier<bool> {
       });
     });
   }
+
+  //
+  //
+  Stream<List<Post>> fetchUserPost(List<Community> communities) {
+    if (communities.isNotEmpty) {
+      return _postRepository.fetchUserPost(communities);
+    }
+    return Stream.value([]);
+  }
 }
 
 //
@@ -145,4 +154,10 @@ final postControllerProvider = StateNotifierProvider<PostController, bool>((ref)
     storageRepository: storageRepository,
     postRepository: postRepository,
   );
+});
+//
+
+final userPostsProvider = StreamProvider.family((ref, List<Community> communities) {
+  final postController = ref.watch(postControllerProvider.notifier);
+  return postController.fetchUserPost(communities);
 });

@@ -33,7 +33,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(userProvider);
+    final user = ref.watch(userProvider)!;
     final currentTheme = ref.watch(themeNotifierProvider);
 
     return Scaffold(
@@ -59,7 +59,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               },
               child: CircleAvatar(
                 minRadius: 17,
-                backgroundImage: NetworkImage(user?.profilePic ?? Constants.avatarDefault),
+                backgroundImage: NetworkImage(user.profilePic),
               ),
             );
           })

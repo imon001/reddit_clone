@@ -102,10 +102,10 @@ class Post {
         description: map['description'] != null ? map['description'] as String : null,
         commentCount: map['commentCount'] as int,
         createdAt: DateTime.fromMillisecondsSinceEpoch(map['createdAt'] as int),
-        upVote: List<String>.from((map['upVote'] as List<String>)),
-        downVote: List<String>.from((map['downVote'] as List<String>)),
+        upVote: List<String>.from((map['upVote'])),
+        downVote: List<String>.from((map['downVote'])),
         awards: List<String>.from(
-          (map['awards'] as List<String>),
+          (map['awards']),
         ));
   }
   @override
