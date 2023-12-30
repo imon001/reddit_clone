@@ -38,6 +38,52 @@ class PostRepository {
   }
 
   //
+  FutureVoid deletePost(Post post) async {
+    try {
+      return right(_posts.doc(post.id).delete());
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+  //
+
+  void upVote(Post post, String uId) async {
+    if (post.downVote.contains(uId)) {
+      _posts.doc(post.id).update({
+        'downVote': FieldValue.arrayRemove([uId])
+      });
+    }
+    if (post.upVote.contains(uId)) {
+      _posts.doc(post.id).update({
+        'upVote': FieldValue.arrayRemove([uId])
+      });
+    } else {
+      _posts.doc(post.id).update({
+        'upVote': FieldValue.arrayUnion([uId]),
+      });
+    }
+  }
+
+//
+  void downVote(Post post, String uId) async {
+    if (post.upVote.contains(uId)) {
+      _posts.doc(post.id).update({
+        'upVote': FieldValue.arrayRemove([uId])
+      });
+    }
+
+    if (post.downVote.contains(uId)) {
+      _posts.doc(post.id).update({
+        'downVote': FieldValue.arrayRemove([uId])
+      });
+    } else {
+      _posts.doc(post.id).update({
+        'downVote': FieldValue.arrayUnion([uId]),
+      });
+    }
+  }
 }
 
 final postRepositoryProvider = Provider((ref) {

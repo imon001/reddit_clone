@@ -1,15 +1,61 @@
 import 'package:any_link_preview/any_link_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:routemaster/routemaster.dart';
 
 import '../../features/auth/controllers/auth_controller.dart';
+import '../../features/community/controller/community_controller.dart';
+import '../../features/post/controller/post_controller.dart';
 import '../../models/post_model.dart';
 import '../../theme/pallete.dart';
 import '../constants/constants.dart';
+import 'error_text.dart';
+import 'loader.dart';
 
 class PostCard extends ConsumerWidget {
   const PostCard({required this.post, super.key});
   final Post post;
+  void deletePost(BuildContext context, WidgetRef ref) {
+    ref.read(postControllerProvider.notifier).deletePost(context, post);
+  }
+
+  void upVote(WidgetRef ref) {
+    ref.read(postControllerProvider.notifier).upVote(post);
+  }
+
+  void downVote(WidgetRef ref) {
+    ref.read(postControllerProvider.notifier).downVote(post);
+  }
+
+  void deleteDialogBox(BuildContext context, WidgetRef ref) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+              title: const Text('Delete post?'),
+              actions: [
+                IconButton(
+                    onPressed: () {
+                      Routemaster.of(context).pop();
+                    },
+                    icon: const Icon(Icons.cancel)),
+                IconButton(
+                    onPressed: () {
+                      deletePost(context, ref);
+                      Routemaster.of(context).pop();
+                    },
+                    icon: const Icon(Icons.delete)),
+              ],
+            ));
+  }
+
+  void navigateToUser(BuildContext context) {
+    Routemaster.of(context).push('/u/${post.userUid}');
+  }
+
+  void navigateToCommunity(BuildContext context) {
+    Routemaster.of(context).push('/r/${post.communityName}');
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isTypeImage = post.type == 'image';
@@ -45,24 +91,33 @@ class PostCard extends ConsumerWidget {
                               children: [
                                 Row(
                                   children: [
-                                    CircleAvatar(
-                                      backgroundImage: NetworkImage(post.communityProfilePic),
-                                      radius: 26,
+                                    GestureDetector(
+                                      onTap: () => navigateToCommunity(context),
+                                      child: CircleAvatar(
+                                        backgroundImage: NetworkImage(post.communityProfilePic),
+                                        radius: 26,
+                                      ),
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: Column(
                                         children: [
-                                          Text(
-                                            'r/${post.communityName}',
-                                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                                          GestureDetector(
+                                            onTap: () => navigateToCommunity(context),
+                                            child: Text(
+                                              'r/${post.communityName}',
+                                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                                            ),
                                           ),
                                           const SizedBox(
                                             height: 5,
                                           ),
-                                          Text(
-                                            'u/${post.userName}',
-                                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                                          GestureDetector(
+                                            onTap: () => navigateToUser(context),
+                                            child: Text(
+                                              'u/${post.userName}',
+                                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -71,7 +126,9 @@ class PostCard extends ConsumerWidget {
                                 ),
                                 if (user.uid == post.userUid)
                                   IconButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        deleteDialogBox(context, ref);
+                                      },
                                       icon: Icon(
                                         Icons.delete,
                                         color: Pallete.redColor,
@@ -87,7 +144,7 @@ class PostCard extends ConsumerWidget {
                             ),
                             if (isTypeImage)
                               SizedBox(
-                                height: MediaQuery.of(context).size.height * 0.30,
+                                height: MediaQuery.of(context).size.height * 0.25,
                                 width: double.infinity,
                                 child: Image.network(
                                   post.link!,
@@ -95,8 +152,9 @@ class PostCard extends ConsumerWidget {
                                 ),
                               ),
                             if (isTypeLink)
-                              SizedBox(
-                                height: MediaQuery.of(context).size.height * 0.26,
+                              Container(
+                                padding: const EdgeInsets.all(4),
+                                height: MediaQuery.of(context).size.height * 0.20,
                                 width: double.infinity,
                                 child: AnyLinkPreview(displayDirection: UIDirection.uiDirectionHorizontal, link: post.link!),
                               ),
@@ -122,18 +180,20 @@ class PostCard extends ConsumerWidget {
                           Row(
                             children: [
                               IconButton(
-                                  onPressed: () {},
+                                  splashRadius: 1,
+                                  onPressed: () => upVote(ref),
                                   icon: Icon(
                                     Constants.up,
                                     size: 30,
                                     color: post.upVote.contains(user.uid) ? Pallete.redColor : null,
                                   )),
                               Text(
-                                '${post.upVote.length - post.downVote.length == 0 ? 'vote' : post.upVote.length - post.downVote.length}',
+                                '${post.upVote.length - post.downVote.length == 0 ? '0' : post.upVote.length - post.downVote.length}',
                                 style: const TextStyle(fontSize: 18),
                               ),
                               IconButton(
-                                  onPressed: () {},
+                                  splashRadius: 1,
+                                  onPressed: () => downVote(ref),
                                   icon: Icon(
                                     Constants.down,
                                     size: 30,
@@ -143,13 +203,31 @@ class PostCard extends ConsumerWidget {
                           ),
                           Row(
                             children: [
-                              IconButton(onPressed: () {}, icon: const Icon(Icons.comment)),
-                              Text('${post.commentCount == 0 ? 'Comment' : post.commentCount}'),
-                              const SizedBox(
-                                width: 20,
-                              ),
+                              IconButton(splashRadius: 1, onPressed: () {}, icon: const Icon(Icons.comment)),
+                              Text('${post.commentCount == 0 ? '0' : post.commentCount}'),
                             ],
                           ),
+                          ref.watch(getCommunityByNameProvider(post.communityName)).when(
+                                data: (data) {
+                                  if (data.mods.contains(user.uid)) {
+                                    return IconButton(
+                                      onPressed: () {
+                                        deleteDialogBox(context, ref);
+                                      },
+                                      icon: const Icon(
+                                        Icons.admin_panel_settings,
+                                      ),
+                                    );
+                                  }
+                                  return const SizedBox();
+                                },
+                                error: (error, stackTrace) {
+                                  return ErrorText(
+                                    error: error.toString(),
+                                  );
+                                },
+                                loading: () => const LoaderInd(),
+                              ),
                         ],
                       )
                     ],

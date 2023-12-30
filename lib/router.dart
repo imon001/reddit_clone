@@ -35,7 +35,7 @@ final loggedInRoute = RouteMap(routes: {
           child: AddModScreen(
         name: routeData.pathParameters['name']!,
       )),
-  '/user-profile/:uid': (routeData) => MaterialPage(
+  '/u/:uid': (routeData) => MaterialPage(
           child: UserProfileScreen(
         uid: routeData.pathParameters['uid']!,
       )),

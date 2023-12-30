@@ -14,6 +14,8 @@ class UserProfileScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(userProvider)!;
+
     return Scaffold(
       body: ref.watch(getUserDataProvider(uid)).when(
             data: (data) => NestedScrollView(
@@ -47,19 +49,21 @@ class UserProfileScreen extends ConsumerWidget {
                           padding: const EdgeInsets.only(
                             left: 5,
                           ),
-                          child: OutlinedButton(
-                              onPressed: () {
-                                navigateToEditProfileScreen(context);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.black.withOpacity(0.3),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 25,
-                                  )),
-                              child: const Text('Edit profile')),
+                          child: data.uid == user.uid
+                              ? OutlinedButton(
+                                  onPressed: () {
+                                    navigateToEditProfileScreen(context);
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.black.withOpacity(0.3),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 25,
+                                      )),
+                                  child: const Text('Edit profile'))
+                              : const SizedBox(),
                         )
                       ],
                     ),

@@ -13,7 +13,7 @@ class ProfileDrawer extends ConsumerWidget {
   }
 
   void nevigateProfileScreen(BuildContext context, String uid) {
-    Routemaster.of(context).push('/user-profile/$uid');
+    Routemaster.of(context).push('/u/$uid');
   }
 
   void toggleTheme(WidgetRef ref) {
