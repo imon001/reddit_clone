@@ -7,6 +7,7 @@ import '../../../core/failure.dart';
 import '../../../core/providers/firebase_providers.dart';
 import '../../../core/type_defs.dart';
 import '../../../models/community_model.dart';
+import '../../../models/post_model.dart';
 
 class CommunityRepository {
   final FirebaseFirestore _firestore;
@@ -116,6 +117,28 @@ class CommunityRepository {
       return left(Failure(e.toString()));
     }
   }
+
+  Stream<List<Post>> getCommunityPosts(String name) {
+    return _post
+        .where(
+          'communityName',
+          isEqualTo: name,
+        )
+        .orderBy(
+          'createdAt',
+          descending: true,
+        )
+        .snapshots()
+        .map(
+          (event) => event.docs
+              .map(
+                (e) => Post.fromMap(e.data() as Map<String, dynamic>),
+              )
+              .toList(),
+        );
+  }
+
+  CollectionReference get _post => _firestore.collection(FireBaseConstants.postsCollection);
 
   CollectionReference get _communities => _firestore.collection(FireBaseConstants.communitiesCollection);
 }

@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:routemaster/routemaster.dart';
 import '../../../core/common/error_text.dart';
 import '../../../core/common/loader.dart';
+import '../../../core/common/post_card.dart';
 import '../../auth/controllers/auth_controller.dart';
+import '../controller/user_profile_controller.dart';
 
 class UserProfileScreen extends ConsumerWidget {
   const UserProfileScreen({required this.uid, super.key});
@@ -100,7 +102,19 @@ class UserProfileScreen extends ConsumerWidget {
                   )
                 ];
               },
-              body: const Text('Displaying user posts'),
+              body: ref.watch(getUserPostsProvider(uid)).when(
+                    data: (data) {
+                      return ListView.builder(
+                        itemCount: data.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          final post = data[index];
+                          return PostCard(post: post);
+                        },
+                      );
+                    },
+                    error: (error, stackTrace) => ErrorText(error: error.toString()),
+                    loading: () => const LoaderInd(),
+                  ),
             ),
             error: (error, stackTrace) => ErrorText(error: error.toString()),
             loading: () => const LoaderInd(),
