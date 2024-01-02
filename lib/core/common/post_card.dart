@@ -74,6 +74,7 @@ class PostCard extends ConsumerWidget {
     final isTypeText = post.type == 'text';
     final isTypeLink = post.type == 'link';
     final user = ref.watch(userProvider)!;
+    final isGuest = !user.isAuthenticated;
     final currentTheme = ref.watch(themeNotifierProvider);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 8),
@@ -211,7 +212,7 @@ class PostCard extends ConsumerWidget {
                             children: [
                               IconButton(
                                   splashRadius: 1,
-                                  onPressed: () => upVote(ref),
+                                  onPressed: isGuest ? null : () => upVote(ref),
                                   icon: Icon(
                                     Constants.up,
                                     size: 30,
@@ -223,7 +224,7 @@ class PostCard extends ConsumerWidget {
                               ),
                               IconButton(
                                   splashRadius: 1,
-                                  onPressed: () => downVote(ref),
+                                  onPressed: isGuest ? null : () => downVote(ref),
                                   icon: Icon(
                                     Constants.down,
                                     size: 30,
@@ -263,7 +264,7 @@ class PostCard extends ConsumerWidget {
                                 },
                                 loading: () => const LoaderInd(),
                               ),
-                          if (post.userUid != user.uid)
+                          if (post.userUid != user.uid && !isGuest)
                             IconButton(
                                 onPressed: () {
                                   showDialog(

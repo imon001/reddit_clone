@@ -6,9 +6,10 @@ import '../../theme/pallete.dart';
 import '../constants/constants.dart';
 
 class SingInButton extends ConsumerWidget {
-  const SingInButton({super.key});
+  const SingInButton({super.key, this.isFromLogin = true});
+  final bool isFromLogin;
   void singInGoogle(WidgetRef ref, BuildContext context) {
-    ref.read(authControllerProvider.notifier).singInWithGoogle(context);
+    ref.read(authControllerProvider.notifier).singInWithGoogle(context, isFromLogin);
   }
 
   @override

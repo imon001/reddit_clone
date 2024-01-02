@@ -24,6 +24,7 @@ class CommunityScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(userProvider)!;
+    final isGuest = !user.isAuthenticated;
     return Scaffold(
       body: ref.watch(getCommunityByNameProvider(name)).when(
             data: (data) => NestedScrollView(
@@ -68,31 +69,32 @@ class CommunityScreen extends ConsumerWidget {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            data.mods.contains(user.uid)
-                                ? OutlinedButton(
-                                    onPressed: () {
-                                      nevigateToModTools(context);
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 25,
-                                        )),
-                                    child: const Text('Mod tools'))
-                                : OutlinedButton(
-                                    onPressed: () {
-                                      joinAndLeaveCommunity(
-                                        ref,
-                                        context,
-                                        data,
-                                      );
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 25,
-                                        )),
-                                    child: Text(data.members.contains(user.uid) ? 'Leave' : 'Join'))
+                            if (!isGuest)
+                              data.mods.contains(user.uid)
+                                  ? OutlinedButton(
+                                      onPressed: () {
+                                        nevigateToModTools(context);
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 25,
+                                          )),
+                                      child: const Text('Mod tools'))
+                                  : OutlinedButton(
+                                      onPressed: () {
+                                        joinAndLeaveCommunity(
+                                          ref,
+                                          context,
+                                          data,
+                                        );
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 25,
+                                          )),
+                                      child: Text(data.members.contains(user.uid) ? 'Leave' : 'Join'))
                           ],
                         ),
                         Padding(

@@ -229,6 +229,12 @@ class PostController extends StateNotifier<bool> {
       Routemaster.of(context).pop();
     });
   }
+
+  //
+  //
+  Stream<List<Post>> fetchGuestPost() {
+    return _postRepository.fetchGuestPosts();
+  }
 }
 
 //
@@ -265,3 +271,7 @@ final getPostCommentsProvider = StreamProvider.family((ref, String postId) {
 });
 //
 //
+final guestPostsProvider = StreamProvider((ref) {
+  final postController = ref.watch(postControllerProvider.notifier);
+  return postController.fetchGuestPost();
+});
