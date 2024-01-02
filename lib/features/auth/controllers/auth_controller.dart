@@ -26,6 +26,30 @@ class AuthController extends StateNotifier<bool> {
     );
   }
 
+  //
+  ////
+  ///
+  ///
+  ///
+  //
+  void singInAsGuest(BuildContext context) async {
+    state = true;
+    final user = await _authRepository.singInAsGuest();
+    state = false;
+
+    user.fold(
+      (l) => showSnackBar(context, l.msg),
+      (usermodel) => _ref.read(userProvider.notifier).update((state) => usermodel),
+    );
+  }
+
+  ///
+  ///
+  ///
+  ///
+  ///
+  ///
+
   Stream<UserModel> getUserData(String uid) {
     return _authRepository.getUserData(uid);
   }
@@ -37,6 +61,11 @@ class AuthController extends StateNotifier<bool> {
 
 //
 //
+
+//
+//
+//
+
 //
 final authControllerProvider = StateNotifierProvider<AuthController, bool>((ref) {
   return AuthController(
